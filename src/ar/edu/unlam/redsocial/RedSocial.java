@@ -54,9 +54,11 @@ public class RedSocial {
 		return this.feed;
 	}
 
-	public TreeSet<Publicacion> obtenerPublicacionesOrdenadasPorLikes() {
+	public TreeSet<Publicacion> obtenerPublicacionesOrdenadasPorCantidadDeLikes() {
 
-		TreeSet<Publicacion> ordenadosPorLikes = new TreeSet<Publicacion>();
+		OrdenPublicacionesPorLikesDes orden = new OrdenPublicacionesPorLikesDes();
+		
+		TreeSet<Publicacion> ordenadosPorLikes = new TreeSet<Publicacion>(orden);
 		ordenadosPorLikes.addAll(this.feed);
 
 		return ordenadosPorLikes;

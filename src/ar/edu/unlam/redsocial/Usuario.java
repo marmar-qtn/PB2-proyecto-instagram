@@ -7,7 +7,7 @@ import java.util.Set;
 import src.ar.edu.unlam.redsocial.Exceptions.NoSePuedeSeguirseAUnoMismoException;
 import src.ar.edu.unlam.redsocial.Exceptions.YaSiguiendoException;
 
-public abstract class Usuario implements Comparable<Usuario>{
+public abstract class Usuario {
 
     private String username;
     private String biografia;

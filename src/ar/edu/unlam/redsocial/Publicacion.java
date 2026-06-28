@@ -8,7 +8,7 @@ import java.util.Set;
 
 import src.ar.edu.unlam.redsocial.Interfaces.Interactuable;
 
-public abstract class Publicacion implements Interactuable, Comparable<Publicacion> {
+public abstract class Publicacion implements Interactuable {
 	private Usuario autor;
 	private String descripcion;
 	private LocalDateTime fecha;
@@ -59,18 +59,6 @@ public abstract class Publicacion implements Interactuable, Comparable<Publicaci
 
 	public List<Comentario> getComentarios() {
 		return comentarios;
-	}
-
-	@Override
-	public int compareTo(Publicacion otra) {
-
-		int resultado = Integer.compare(otra.getCantidadLikes(), this.getCantidadLikes());
-
-		if (resultado == 0) {
-			resultado = this.getDescripcion().compareTo(otra.getDescripcion());
-		}
-		return resultado;
-
 	}
 
 }

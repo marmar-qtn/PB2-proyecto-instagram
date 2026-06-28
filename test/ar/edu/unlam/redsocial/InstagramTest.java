@@ -202,7 +202,7 @@ public class InstagramTest {
 		foto3.darLike(ori);
 		foto3.darLike(maca);
 
-		TreeSet<Publicacion> publicacionesOrdenadasPorLikes = app.obtenerPublicacionesOrdenadasPorLikes();
+		TreeSet<Publicacion> publicacionesOrdenadasPorLikes = app.obtenerPublicacionesOrdenadasPorCantidadDeLikes();
 
 		int i = 0;
 		for (Publicacion publicacion : publicacionesOrdenadasPorLikes) {
