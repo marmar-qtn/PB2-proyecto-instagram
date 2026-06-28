@@ -28,7 +28,7 @@ public class Historia extends Publicacion implements Reproducible{
 
     @Override
     public String reproducir() {
-         return "⚡ Mostrando historia de @" + getAutor().getUsername() + "...";
+         return "Mostrando historia de @" + getAutor().getUsername() + "...";
     }
     
 }
