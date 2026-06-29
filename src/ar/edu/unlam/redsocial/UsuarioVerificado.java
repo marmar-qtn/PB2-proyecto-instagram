@@ -1,25 +1,19 @@
 package src.ar.edu.unlam.redsocial;
 
-public class UsuarioVerificado extends Usuario{
-    private String insignia;
-    
-    public UsuarioVerificado( String username){
-        super(username);
-        this.insignia = "★";
-    }
+public class UsuarioVerificado extends Usuario {
+	private String insignia;
 
-    public String getInsignia() {
-        return insignia;
-    }
+	public UsuarioVerificado(String username) {
+		super(username);
+		this.insignia = "★";
+	}
 
-    public void setInsignia(String insignia) {
-        this.insignia = insignia;
-    }
+	public String getInsignia() {
+		return insignia;
+	}
 
-    @Override
-    public int compareTo(Usuario o) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
-    }
-    
+	public void setInsignia(String insignia) {
+		this.insignia = insignia;
+	}
+
 }

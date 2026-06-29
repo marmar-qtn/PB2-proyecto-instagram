@@ -3,6 +3,7 @@ package test.ar.edu.unlam.redsocial;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -56,7 +57,7 @@ public class InstagramTest {
 	}
 
 	@Test
-	public void testUnicidadDeLikesEnPublicacion() throws UsuarioNoEncontradoException, UsuarioYaExisteException {
+	public void testUnicidadDeLikesEnPublicacion() throws UsuarioNoEncontradoException, UsuarioYaExisteException, CuentaPrivadaException {
 
 		RedSocial app = new RedSocial("Instagram");
 
@@ -76,7 +77,7 @@ public class InstagramTest {
 
 	@Test
 	public void testObtenerFeedSoloContienePosteosDeUsuariosSeguidos() throws UsuarioNoEncontradoException,
-			NoSePuedeSeguirseAUnoMismoException, YaSiguiendoException, UsuarioYaExisteException {
+			NoSePuedeSeguirseAUnoMismoException, YaSiguiendoException, UsuarioYaExisteException, CuentaInactivaException {
 
 		RedSocial app = new RedSocial("Instagram");
 
@@ -155,7 +156,7 @@ public class InstagramTest {
 	}
 
 	@Test
-	public void testQuitarElLikeEnUnaPublicacion() throws UsuarioYaExisteException, UsuarioNoEncontradoException {
+	public void testQuitarElLikeEnUnaPublicacion() throws UsuarioYaExisteException, UsuarioNoEncontradoException, CuentaPrivadaException {
 		RedSocial app = new RedSocial("Instagram");
 
 		app.registrarUsuario("marmar.qtn");
@@ -178,7 +179,8 @@ public class InstagramTest {
 	}
 
 	@Test
-	public void testRankingDePublicacionesOrdenadasPorCantidadDeLikesDescendentes() throws UsuarioYaExisteException, UsuarioNoEncontradoException {
+	public void testRankingDePublicacionesOrdenadasPorCantidadDeLikesDescendentes()
+			throws UsuarioYaExisteException, UsuarioNoEncontradoException, CuentaPrivadaException {
 		RedSocial app = new RedSocial("Instagram");
 
 		app.registrarUsuario("marmar.qtn");
@@ -269,18 +271,122 @@ public class InstagramTest {
 		}
 
 	}
-	
-	@Test
-	public void testReproducirLaHistoriaPublicadaDelUsuario() throws UsuarioNoEncontradoException, UsuarioYaExisteException {
-		RedSocial app = new RedSocial("Instagram");
-		
-	    app.registrarUsuario("arii");
-	    Usuario ariana = app.obtenerUsuario("arii");
 
-	    Historia historia = new Historia(ariana, "Noche de sushii");
+	@Test
+	public void testReproducirLaHistoriaPublicadaDelUsuario()
+			throws UsuarioNoEncontradoException, UsuarioYaExisteException {
+		RedSocial app = new RedSocial("Instagram");
+
+		app.registrarUsuario("arii");
+		Usuario ariana = app.obtenerUsuario("arii");
+
+		Historia historia = new Historia(ariana, "Noche de sushii");
+
+		assertEquals("Mostrando historia de @arii...", historia.reproducir());
+
+	}
+
+	@Test
+	public void testBiografiaSeActualizaCorrectamente() throws UsuarioNoEncontradoException, UsuarioYaExisteException {
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("ori");
+		Usuario ori = app.obtenerUsuario("ori");
+		ori.setBiografia("Que ganas de comer brownie");
+		assertEquals("Que ganas de comer brownie", ori.getBiografia());
+	}
+
+	@Test
+	public void testEstadoDeLaCuentaCambiaCorrectamente()
+			throws UsuarioNoEncontradoException, UsuarioYaExisteException, UsuarioBloqueadoPermanenteException {
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("oriori");
+		Usuario oriori = app.obtenerUsuario("oriori");
+
+		assertEquals(EstadoCuenta.ACTIVA, oriori.getEstado());
+
+		oriori.setEstado(EstadoCuenta.SUSPENDIDA);
+		assertEquals(EstadoCuenta.SUSPENDIDA, oriori.getEstado());
+	}
+
+	@Test(expected = UsuarioBloqueadoPermanenteException.class)
+	public void testNoSePuedeCambiarElEstadoDeUnaCuentaBloqueadaPermanentemente()
+			throws UsuarioNoEncontradoException, UsuarioYaExisteException, UsuarioBloqueadoPermanenteException {
+
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("oriori");
+		Usuario oriori = app.obtenerUsuario("oriori");
+
+		oriori.setEstado(EstadoCuenta.BLOQUEADA_PERMANENTE);
+		assertEquals(EstadoCuenta.BLOQUEADA_PERMANENTE, oriori.getEstado());
+		oriori.setEstado(EstadoCuenta.ACTIVA);
+
+	}
+
+	@Test(expected = HistoriaExpiradaException.class)
+	public void testNoSePuedeComentarUnaHistoriaExpirada()
+			throws UsuarioNoEncontradoException, UsuarioYaExisteException {
+
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("oriori");
+		Usuario oriori = app.obtenerUsuario("oriori");
+
+		Historia historia = new Historia(oriori, "1");
+		historia.setFechaExpiracion(LocalDateTime.of(2024, 1, 1, 10, 0));
+
+		historia.reproducir();
+	}
+
+	@Test(expected = DuracionInvalidaException.class)
+	public void testDuracionDelVideoNegativaError() throws UsuarioNoEncontradoException, UsuarioYaExisteException, CuentaInactivaException {
+
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("macaa");
+		Usuario maca = app.obtenerUsuario("macaa");
+
+		Video video = new Video(maca, "maca comiendo macarrones amacandose mientras escucha la macarena", -10, "1080p");
+		app.publicar(video);
+	}
+
+	@Test 
+	public void testElContadorDeLikesEmpiezaEnCero() throws UsuarioNoEncontradoException, UsuarioYaExisteException, CuentaInactivaException {
+
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("arii");
+		Usuario ari = app.obtenerUsuario("arii");
+
+		Foto foto = new Foto(ari, "1","Tutorial", "1080p");
+		app.publicar(foto);
+		assertEquals(0,foto.getCantidadLikes());
+	}
+	
+	@Test (expected = CuentaInactivaException.class)
+	public void testNoSePuedePublicarSiLaCuentaEstaSuspendida() throws UsuarioNoEncontradoException, UsuarioYaExisteException, CuentaInactivaException, UsuarioBloqueadoPermanenteException {
 		
-	    assertEquals("Mostrando historia de @arii...", historia.reproducir());
+
+		RedSocial app = new RedSocial("Instagram");
+		app.registrarUsuario("orii");
+		Usuario ori = app.obtenerUsuario("orii");
+
+		Foto foto = new Foto(ori, "1","Tutorial", "1080p");
+		ori.setEstado(EstadoCuenta.BLOQUEADA_PERMANENTE);
+		assertEquals(EstadoCuenta.BLOQUEADA_PERMANENTE, ori.getEstado());
+		app.publicar(foto);
+	}
+	
+	@Test (expected = CuentaPrivadaException.class)
+	public void testNoSePuedeDarLikeAUnaCuentaPrivadaAMenosQueSeSiga() throws UsuarioNoEncontradoException, UsuarioYaExisteException, CuentaInactivaException, UsuarioBloqueadoPermanenteException, CuentaPrivadaException {
 		
+	    RedSocial app = new RedSocial("Instagram");
+	    app.registrarUsuario("arii");
+	    app.registrarUsuario("marmar.qtn");
+	    Usuario ari = app.obtenerUsuario("arii");
+	    Usuario maca = app.obtenerUsuario("marmar.qtn");
+
+	    maca.setPrivacidad(PrivacidadCuenta.PRIVADA);
+
+	    Publicacion foto = new Foto(maca, "Foto de Haru durmiendo", "Aro de Luz", "2992x2992");
+
+	    foto.darLike(ari);
 	}
 
 }

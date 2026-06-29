@@ -6,11 +6,14 @@ import java.util.Set;
 
 import src.ar.edu.unlam.redsocial.Exceptions.NoSePuedeSeguirseAUnoMismoException;
 import src.ar.edu.unlam.redsocial.Exceptions.YaSiguiendoException;
+import src.ar.edu.unlam.redsocial.Exceptions.UsuarioBloqueadoPermanenteException;
 
 public abstract class Usuario {
 
     private String username;
     private String biografia;
+    private EstadoCuenta estadoActual;
+    private PrivacidadCuenta privacidad = PrivacidadCuenta.PUBLICA;
 
     private Set<Usuario> seguidos;
     private Set<Usuario> seguidores;
@@ -20,6 +23,8 @@ public abstract class Usuario {
         this.biografia = "";
         this.seguidos = new HashSet<>();
         this.seguidores = new HashSet<>();
+        this.estadoActual = EstadoCuenta.ACTIVA;
+        
     }
 
     public String getUsername() {
@@ -57,7 +62,28 @@ public abstract class Usuario {
         this.seguidores.add(seguidor);
     }
 
-    @Override
+    public EstadoCuenta getEstado() {
+		return estadoActual;
+	}
+
+	public void setEstado(EstadoCuenta estadoActual) throws UsuarioBloqueadoPermanenteException {
+		if (this.estadoActual == EstadoCuenta.BLOQUEADA_PERMANENTE) {
+			throw new UsuarioBloqueadoPermanenteException("La cuenta esta bloqueada permanentemente");
+		}
+		this.estadoActual = estadoActual;
+	}
+
+	
+	
+	public PrivacidadCuenta getPrivacidad() {
+		return privacidad;
+	}
+
+	public void setPrivacidad(PrivacidadCuenta privacidad) {
+		this.privacidad = privacidad;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

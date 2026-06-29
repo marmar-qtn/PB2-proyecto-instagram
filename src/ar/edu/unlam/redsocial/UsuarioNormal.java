@@ -6,9 +6,4 @@ public class UsuarioNormal extends Usuario{
         super(username);
     }
 
-    @Override
-    public int compareTo(Usuario o) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
-    }
 }
