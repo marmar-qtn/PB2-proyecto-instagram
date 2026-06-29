@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import src.ar.edu.unlam.redsocial.Exceptions.CuentaPrivadaException;
 import src.ar.edu.unlam.redsocial.Interfaces.Interactuable;
 
 public abstract class Publicacion implements Interactuable {
@@ -32,7 +33,12 @@ public abstract class Publicacion implements Interactuable {
 	}
 
 	@Override
-	public void darLike(Usuario usuario) {
+	public void darLike(Usuario usuario) throws CuentaPrivadaException {
+		if(this.autor.getPrivacidad() == PrivacidadCuenta.PRIVADA && 
+				!usuario.getSeguidores().contains(autor))
+				{
+			throw new CuentaPrivadaException("No se puede dar like a una cuenta PRIVADA y NO SEGUIDA");
+		}
 		this.likes.add(usuario);
 	}
 

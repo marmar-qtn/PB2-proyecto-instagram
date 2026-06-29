@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import src.ar.edu.unlam.redsocial.Exceptions.CuentaInactivaException;
+import src.ar.edu.unlam.redsocial.Exceptions.DuracionInvalidaException;
 import src.ar.edu.unlam.redsocial.Exceptions.UsuarioNoEncontradoException;
 import src.ar.edu.unlam.redsocial.Exceptions.UsuarioYaExisteException;
 
@@ -46,7 +48,21 @@ public class RedSocial {
 		return feedFiltrado;
 	}
 
-	public void publicar(Publicacion publicacion) {
+//	public void publicar(Publicacion publicacion) {
+//		this.feed.add(publicacion);
+//	}
+
+	public void publicar(Publicacion publicacion) throws CuentaInactivaException {
+		if (publicacion instanceof Video) {
+			Video video = (Video) publicacion;
+			if (video.getDuracionSegundos() <= 0) {
+				throw new DuracionInvalidaException("La duración del video no puede ser negativa o cero");
+			}
+		}
+		
+		if(publicacion.getAutor().getEstado() != EstadoCuenta.ACTIVA) {
+			throw new CuentaInactivaException("La cuenta no esta activa y no puede realizar acciones en este momento");
+		}
 		this.feed.add(publicacion);
 	}
 
@@ -57,7 +73,7 @@ public class RedSocial {
 	public TreeSet<Publicacion> obtenerPublicacionesOrdenadasPorCantidadDeLikes() {
 
 		OrdenPublicacionesPorLikesDes orden = new OrdenPublicacionesPorLikesDes();
-		
+
 		TreeSet<Publicacion> ordenadosPorLikes = new TreeSet<Publicacion>(orden);
 		ordenadosPorLikes.addAll(this.feed);
 
@@ -65,9 +81,9 @@ public class RedSocial {
 	}
 
 	public TreeSet<Usuario> obtenerSeguidoresPorOrdenDescendente() {
-		
+
 		OrdenSeguidoresDes orden = new OrdenSeguidoresDes();
-		
+
 		TreeSet<Usuario> ordenadosDes = new TreeSet<Usuario>(orden);
 		ordenadosDes.addAll(this.usuarios.values());
 		return ordenadosDes;
